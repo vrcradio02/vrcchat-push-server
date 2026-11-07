@@ -6,9 +6,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const vapidPublicKey = process.env.BAFO9B__9Sv9qBQJXFUHk1KoEqwE7aHbEtnUKZzW3xZ7Hl8I3odRP4WPCuwWjHY9AqnAIzgjcklDNA8BycsWY5A;
-const vapidPrivateKey = process.env.7mN1DWxSLlGQkZYtUq7iZmurgLjDkIPqGSmYbYKy1Yo;
-const vapidEmail = process.env.vrc.radio02@tutamail.com || 'contact@vrcchat.com';
+const vapidPublicKey = process.env.VAPID_PUBLIC_KEY;
+const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY;
+const vapidEmail = process.env.VAPID_EMAIL || 'contact@vrcchat.com';
 
 webpush.setVapidDetails(vapidEmail, vapidPublicKey, vapidPrivateKey);
 
