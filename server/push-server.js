@@ -7,8 +7,8 @@ app.use(cors());
 app.use(express.json());
 
 // ⚠️ REMPLACE PAR TES VRAIES CLÉS VAPID (étape 2)
-const vapidPublicKey = 'BG...ta_clé_publique_ici...';
-const vapidPrivateKey = 'BG...ta_clé_privée_ici...';
+const vapidPublicKey = 'BAFO9B__9Sv9qBQJXFUHk1KoEqwE7aHbEtnUKZzW3xZ7Hl8I3odRP4WPCuwWjHY9AqnAIzgjcklDNA8BycsWY5A';
+const vapidPrivateKey = '7mN1DWxSLlGQkZYtUq7iZmurgLjDkIPqGSmYbYKy1Yo';
 const vapidEmail = 'ton-email@tutamail.com'; // ou n'importe quel email
 
 webpush.setVapidDetails(vapidEmail, vapidPublicKey, vapidPrivateKey);
