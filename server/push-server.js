@@ -1,61 +1,54 @@
 const express = require('express');
 const cors = require('cors');
-const { admin } = require('./firebase-admin');
+const webpush = require('web-push');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const userTokens = new Map();
+// ⚠️ REMPLACE PAR TES VRAIES CLÉS VAPID (étape 2)
+const vapidPublicKey = 'BG...ta_clé_publique_ici...';
+const vapidPrivateKey = 'BG...ta_clé_privée_ici...';
+const vapidEmail = 'ton-email@tutamail.com'; // ou n'importe quel email
+
+webpush.setVapidDetails(vapidEmail, vapidPublicKey, vapidPrivateKey);
+
+const subscriptions = new Map(); // userId => subscription
 
 app.post('/register', async (req, res) => {
-  const { userId, token } = req.body;
-  if (!userId || !token) {
-    return res.status(400).json({ error: 'userId et token requis' });
+  const { userId, subscription } = req.body;
+  if (!userId || !subscription) {
+    return res.status(400).json({ error: 'userId et subscription requis' });
   }
-  userTokens.set(userId, token);
-  console.log(`✅ Token enregistré pour ${userId}`);
+  subscriptions.set(userId, subscription);
+  console.log(`✅ Abonnement enregistré pour ${userId}`);
   res.json({ success: true });
 });
 
 app.post('/unregister', async (req, res) => {
   const { userId } = req.body;
-  if (userId) userTokens.delete(userId);
+  if (userId) subscriptions.delete(userId);
   res.json({ success: true });
 });
 
 app.post('/send-push', async (req, res) => {
   const { userId, title, body, clickAction } = req.body;
-  const token = userTokens.get(userId);
+  const sub = subscriptions.get(userId);
 
-  if (!token) {
+  if (!sub) {
     return res.status(404).json({ error: 'Utilisateur non abonné' });
   }
 
   try {
-    await admin.messaging().send({
-      token,
-      notification: {
-        title,
-        body
-      },
+    await webpush.sendNotification(sub, JSON.stringify({
+      title: title || 'VRCchat',
+      body: body || 'Nouveau message',
+      icon: '/favicon.svg',
+      badge: '/favicon.svg',
       data: {
-        click_action: clickAction || 'https://vrcchat.surge.sh'
-      },
-      android: {
-        notification: {
-          icon: 'favicon.svg',
-          sound: 'default'
-        }
-      },
-      apns: {
-        payload: {
-          aps: {
-            sound: 'default'
-          }
-        }
+        url: clickAction || 'https://vrcchat.surge.sh'
       }
-    });
+    }));
     res.json({ success: true });
   } catch (error) {
     console.error('Erreur envoi push:', error);
