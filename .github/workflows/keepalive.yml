@@ -2,6 +2,7 @@ name: Render push keepalive
 
 on:
   schedule:
+    # Render endort un service gratuit apres 15 min sans requete.
     - cron: '*/5 * * * *'
   workflow_dispatch:
 
@@ -9,7 +10,7 @@ permissions: {}
 
 jobs:
   ping:
-    name: Réveiller le serveur push
+    name: Reveiller le serveur push
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
