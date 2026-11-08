@@ -1,0 +1,27 @@
+name: Render push keepalive
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  ping:
+    name: Réveiller le serveur push
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Ping /health
+        run: |
+          set -euo pipefail
+          curl \
+            --silent \
+            --show-error \
+            --fail-with-body \
+            --retry 3 \
+            --retry-delay 10 \
+            --retry-all-errors \
+            --max-time 90 \
+            https://vrcchat-push-server.onrender.com/health
